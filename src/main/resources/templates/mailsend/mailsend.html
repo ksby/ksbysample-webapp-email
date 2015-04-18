@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>ksbysample-webapp-email</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'/>
+
+    <meta th:replace="common/head-cssjs"/>
+</head>
+<body class="skin-blue">
+<div class="wrapper">
+
+    <!-- Main Header -->
+    <div th:replace="common/mainparts :: main-header"></div>
+
+    <!-- Left side column. contains the logo and sidebar -->
+    <div th:replace="common/mainparts :: main-sidebar (active='mailsend')"></div>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h1>
+                メール送信画面
+            </h1>
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <form id="mailSendForm" method="post" action="/mailsend/send" th:action="@{/mailsend/send}" class="form-horizontal">
+                        <!--<div class="callout callout-danger">-->
+                            <!--<p>共通エラーメッセージ表示エリア</p>-->
+                        <!--</div>-->
+                        <div class="box box-primary">
+                            <div class="box-body">
+                                <div class="form-group">
+                                    <label for="from" class="control-label col-sm-2">From</label>
+                                    <div class="col-sm-10">
+                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="from" id="from" class="form-control input-sm" value="" placeholder="Fromアドレスを入力して下さい"/></div></div></div>
+                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="to" class="control-label col-sm-2">To</label>
+                                    <div class="col-sm-10">
+                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="to" id="to" class="form-control input-sm" value="" placeholder="Toアドレスを入力して下さい"/></div></div></div>
+                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="to" class="control-label col-sm-2">Subject</label>
+                                    <div class="col-sm-10">
+                                        <div class="row"><div class="col-sm-12"><input type="text" name="subject" id="subject" class="form-control input-sm" value="" placeholder="件名を入力して下さい"/></div></div>
+                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="name" class="control-label col-sm-2">氏名</label>
+                                    <div class="col-sm-10">
+                                        <div class="row"><div class="col-sm-8"><input type="text" name="name" id="name" class="form-control input-sm" value="" placeholder="（例）　田中　太郎"/></div></div>
+                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">性別</label>
+                                    <div class="col-sm-10">
+                                        <div class="row"><div class="col-sm-12">
+                                            <div class="radio">
+                                                <label><input type="radio" name="sex" value="man"/>男</label>　
+                                                <label><input type="radio" name="sex" value="woman"/>女</label>
+                                            </div>
+                                        </div></div>
+                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">項目</label>
+                                    <div class="col-sm-10">
+                                        <div class="row"><div class="col-sm-8">
+                                            <select name="type" id="type" class="form-control input-sm">
+                                                <option>資料請求</option>
+                                                <option>商品に関する苦情</option>
+                                                <option>その他</option>
+                                            </select>
+                                        </div></div>
+                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label col-sm-2">商品</label>
+                                    <div class="col-sm-10">
+                                        <div class="row"><div class="col-sm-12">
+                                            <div class="checkbox">
+                                                <label><input type="checkbox" name="item" value="1"/>商品１</label>　
+                                                <label><input type="checkbox" name="item" value="2"/>商品２</label>　
+                                                <label><input type="checkbox" name="item" value="3"/>商品３</label>
+                                            </div>
+                                        </div></div>
+                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="naiyo" class="control-label col-sm-2">内容</label>
+                                    <div class="col-sm-10">
+                                        <div class="row"><div class="col-sm-12"><textarea rows="5" name="naiyo" id="naiyo" class="form-control input-sm" placeholder="お問い合わせ内容を入力して下さい"></textarea></div></div>
+                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="box-footer">
+                                <div class="text-center">
+                                    <button type="button" id="send" value="send" class="btn btn-primary">送信</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED JS SCRIPTS -->
+
+<div th:replace="common/bottom-js"></div>
+<script type="text/javascript">
+<!--
+$(document).ready(function() {
+    $('#from').focus();
+
+    $('#send').bind('click', function(){
+        $('#mailSendForm').submit();
+    });
+});
+-->
+</script>
+</body>
+</html>
