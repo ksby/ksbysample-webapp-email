@@ -7,6 +7,14 @@
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'/>
 
     <meta th:replace="common/head-cssjs"/>
+    <style>
+    <!--
+    .checkbox label,
+    .radio label {
+        padding-right: 10px;
+    }
+    -->
+    </style>
 </head>
 <body class="skin-blue">
 <div class="wrapper">
@@ -30,7 +38,7 @@
         <section class="content">
             <div class="row">
                 <div class="col-xs-12">
-                    <form id="mailSendForm" method="post" action="/mailsend/send" th:action="@{/mailsend/send}" class="form-horizontal">
+                    <form id="mailsendForm" method="post" action="/mailsend/send" th:action="@{/mailsend/send}" th:object="${mailsendForm}" class="form-horizontal">
                         <!--<div class="callout callout-danger">-->
                             <!--<p>共通エラーメッセージ表示エリア</p>-->
                         <!--</div>-->
@@ -39,7 +47,7 @@
                                 <div class="form-group">
                                     <label for="from" class="control-label col-sm-2">From</label>
                                     <div class="col-sm-10">
-                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="from" id="from" class="form-control input-sm" value="" placeholder="Fromアドレスを入力して下さい"/></div></div></div>
+                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="from" id="from" class="form-control input-sm" value="" placeholder="Fromアドレスを入力して下さい" th:field="*{from}"/></div></div></div>
                                         <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
                                     </div>
                                 </div>
@@ -47,15 +55,15 @@
                                 <div class="form-group">
                                     <label for="to" class="control-label col-sm-2">To</label>
                                     <div class="col-sm-10">
-                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="to" id="to" class="form-control input-sm" value="" placeholder="Toアドレスを入力して下さい"/></div></div></div>
+                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="to" id="to" class="form-control input-sm" value="" placeholder="Toアドレスを入力して下さい" th:field="*{to}"/></div></div></div>
                                         <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="to" class="control-label col-sm-2">Subject</label>
+                                    <label for="subject" class="control-label col-sm-2">Subject</label>
                                     <div class="col-sm-10">
-                                        <div class="row"><div class="col-sm-12"><input type="text" name="subject" id="subject" class="form-control input-sm" value="" placeholder="件名を入力して下さい"/></div></div>
+                                        <div class="row"><div class="col-sm-12"><input type="text" name="subject" id="subject" class="form-control input-sm" value="" placeholder="件名を入力して下さい" th:field="*{subject}"/></div></div>
                                         <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
                                     </div>
                                 </div>
@@ -63,7 +71,7 @@
                                 <div class="form-group">
                                     <label for="name" class="control-label col-sm-2">氏名</label>
                                     <div class="col-sm-10">
-                                        <div class="row"><div class="col-sm-8"><input type="text" name="name" id="name" class="form-control input-sm" value="" placeholder="（例）　田中　太郎"/></div></div>
+                                        <div class="row"><div class="col-sm-8"><input type="text" name="name" id="name" class="form-control input-sm" value="" placeholder="（例）　田中　太郎" th:field="*{name}"/></div></div>
                                         <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
                                     </div>
                                 </div>
@@ -73,8 +81,9 @@
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-12">
                                             <div class="radio">
-                                                <label><input type="radio" name="sex" value="man"/>男</label>　
-                                                <label><input type="radio" name="sex" value="woman"/>女</label>
+                                                <label th:each="sex : ${T(ksbysample.webapp.email.config.Constant).getInstance().SEX_MAP.entrySet()}">
+                                                    <input type="radio" name="sex" th:value="${sex.getKey()}" th:text="${sex.getValue()}" th:field="*{sex}"/>
+                                                </label>
                                             </div>
                                         </div></div>
                                         <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
@@ -85,10 +94,10 @@
                                     <label class="control-label col-sm-2">項目</label>
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-8">
-                                            <select name="type" id="type" class="form-control input-sm">
-                                                <option>資料請求</option>
-                                                <option>商品に関する苦情</option>
-                                                <option>その他</option>
+                                            <select name="type" id="type" class="form-control input-sm" th:field="*{type}">
+                                                <option th:each="type : ${T(ksbysample.webapp.email.config.Constant).getInstance().TYPE_MAP.entrySet()}"
+                                                        th:value="${type.getKey()}"
+                                                        th:text="${type.getValue()}">sex</option>
                                             </select>
                                         </div></div>
                                         <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
@@ -100,9 +109,9 @@
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-12">
                                             <div class="checkbox">
-                                                <label><input type="checkbox" name="item" value="1"/>商品１</label>　
-                                                <label><input type="checkbox" name="item" value="2"/>商品２</label>　
-                                                <label><input type="checkbox" name="item" value="3"/>商品３</label>
+                                                <label th:each="item : ${T(ksbysample.webapp.email.config.Constant).getInstance().ITEM_MAP.entrySet()}">
+                                                    <input type="checkbox" name="item" th:value="${item.getKey()}" th:text="${item.getValue()}" th:field="*{item}"/>
+                                                </label>
                                             </div>
                                         </div></div>
                                         <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
@@ -112,7 +121,7 @@
                                 <div class="form-group">
                                     <label for="naiyo" class="control-label col-sm-2">内容</label>
                                     <div class="col-sm-10">
-                                        <div class="row"><div class="col-sm-12"><textarea rows="5" name="naiyo" id="naiyo" class="form-control input-sm" placeholder="お問い合わせ内容を入力して下さい"></textarea></div></div>
+                                        <div class="row"><div class="col-sm-12"><textarea rows="5" name="naiyo" id="naiyo" class="form-control input-sm" placeholder="お問い合わせ内容を入力して下さい" th:field="*{naiyo}"></textarea></div></div>
                                         <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
                                     </div>
                                 </div>
@@ -143,7 +152,7 @@ $(document).ready(function() {
     $('#from').focus();
 
     $('#send').bind('click', function(){
-        $('#mailSendForm').submit();
+        $('#mailsendForm').submit();
     });
 });
 -->
