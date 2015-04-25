@@ -37,8 +37,8 @@ public class MAIL001MailBuilder {
 
     public SimpleMailMessage create() {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom(mailsendForm.getFrom());
-        mailMessage.setTo(mailsendForm.getTo());
+        mailMessage.setFrom(mailsendForm.getFromAddr());
+        mailMessage.setTo(mailsendForm.getToAddr());
         mailMessage.setSubject(mailsendForm.getSubject());
 
         Constant constant = Constant.getInstance();

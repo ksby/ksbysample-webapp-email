@@ -13,6 +13,13 @@
     .radio label {
         padding-right: 10px;
     }
+    .form-control-static {
+        padding-top: 0px;
+        padding-bottom: 0px;
+    }
+    .has-error .form-control {
+        background-color: #fff5ee;
+    }
     -->
     </style>
 </head>
@@ -39,44 +46,45 @@
             <div class="row">
                 <div class="col-xs-12">
                     <form id="mailsendForm" method="post" action="/mailsend/send" th:action="@{/mailsend/send}" th:object="${mailsendForm}" class="form-horizontal">
-                        <!--<div class="callout callout-danger">-->
-                            <!--<p>共通エラーメッセージ表示エリア</p>-->
-                        <!--</div>-->
+                        <div class="callout callout-danger" th:if="${#fields.hasGlobalErrors()}">
+                            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}">共通エラーメッセージ表示エリア</p>
+                        </div>
+
                         <div class="box box-primary">
                             <div class="box-body">
-                                <div class="form-group">
-                                    <label for="from" class="control-label col-sm-2">From</label>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('*{fromAddr}')} ? 'has-error' : ''">
+                                    <label for="fromAddr" class="control-label col-sm-2">From</label>
                                     <div class="col-sm-10">
-                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="from" id="from" class="form-control input-sm" value="" placeholder="Fromアドレスを入力して下さい" th:field="*{from}"/></div></div></div>
-                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="fromAddr" id="fromAddr" class="form-control input-sm" value="" placeholder="Fromアドレスを入力して下さい" th:field="*{fromAddr}"/></div></div></div>
+                                        <div class="row" th:if="${#fields.hasErrors('*{fromAddr}')}"><div class="col-sm-10"><p class="form-control-static text-danger"><small th:errors="*{fromAddr}">ここにエラーメッセージを表示します</small></p></div></div>
                                     </div>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="to" class="control-label col-sm-2">To</label>
+                                <div class="form-group" th:classappend="${#fields.hasErrors('*{toAddr}')} ? 'has-error' : ''">
+                                    <label for="toAddr" class="control-label col-sm-2">To</label>
                                     <div class="col-sm-10">
-                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="to" id="to" class="form-control input-sm" value="" placeholder="Toアドレスを入力して下さい" th:field="*{to}"/></div></div></div>
-                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                        <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="toAddr" id="toAddr" class="form-control input-sm" value="" placeholder="Toアドレスを入力して下さい" th:field="*{toAddr}"/></div></div></div>
+                                        <div class="row" th:if="${#fields.hasErrors('*{toAddr}')}"><div class="col-sm-10"><p class="form-control-static text-danger"><small th:errors="*{toAddr}">ここにエラーメッセージを表示します</small></p></div></div>
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" th:classappend="${#fields.hasErrors('*{subject}')} ? 'has-error' : ''">
                                     <label for="subject" class="control-label col-sm-2">Subject</label>
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-12"><input type="text" name="subject" id="subject" class="form-control input-sm" value="" placeholder="件名を入力して下さい" th:field="*{subject}"/></div></div>
-                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                        <div class="row" th:if="${#fields.hasErrors('*{subject}')}"><div class="col-sm-10"><p class="form-control-static text-danger"><small th:errors="*{subject}">ここにエラーメッセージを表示します</small></p></div></div>
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" th:classappend="${#fields.hasErrors('*{name}')} ? 'has-error' : ''">
                                     <label for="name" class="control-label col-sm-2">氏名</label>
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-8"><input type="text" name="name" id="name" class="form-control input-sm" value="" placeholder="（例）　田中　太郎" th:field="*{name}"/></div></div>
-                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                        <div class="row" th:if="${#fields.hasErrors('*{name}')}"><div class="col-sm-10"><p class="form-control-static text-danger"><small th:errors="*{name}">ここにエラーメッセージを表示します</small></p></div></div>
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" th:classappend="${#fields.hasErrors('*{sex}')} ? 'has-error' : ''">
                                     <label class="control-label col-sm-2">性別</label>
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-12">
@@ -86,11 +94,11 @@
                                                 </label>
                                             </div>
                                         </div></div>
-                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                        <div class="row" th:if="${#fields.hasErrors('*{sex}')}"><div class="col-sm-10"><p class="form-control-static text-danger"><small th:errors="*{sex}">ここにエラーメッセージを表示します</small></p></div></div>
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" th:classappend="${#fields.hasErrors('*{type}')} ? 'has-error' : ''">
                                     <label class="control-label col-sm-2">項目</label>
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-8">
@@ -100,11 +108,11 @@
                                                         th:text="${type.getValue()}">sex</option>
                                             </select>
                                         </div></div>
-                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                        <div class="row" th:if="${#fields.hasErrors('*{type}')}"><div class="col-sm-10"><p class="form-control-static text-danger"><small th:errors="*{type}">ここにエラーメッセージを表示します</small></p></div></div>
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" th:classappend="${#fields.hasErrors('*{item}')} ? 'has-error' : ''">
                                     <label class="control-label col-sm-2">商品</label>
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-12">
@@ -114,15 +122,15 @@
                                                 </label>
                                             </div>
                                         </div></div>
-                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                        <div class="row" th:if="${#fields.hasErrors('*{item}')}"><div class="col-sm-10"><p class="form-control-static text-danger"><small th:errors="*{item}">ここにエラーメッセージを表示します</small></p></div></div>
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group" th:classappend="${#fields.hasErrors('*{naiyo}')} ? 'has-error' : ''">
                                     <label for="naiyo" class="control-label col-sm-2">内容</label>
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-12"><textarea rows="5" name="naiyo" id="naiyo" class="form-control input-sm" placeholder="お問い合わせ内容を入力して下さい" th:field="*{naiyo}"></textarea></div></div>
-                                        <!--<div class="row"><div class="col-sm-10"><p class="form-control-static text-danger"><small>ここにエラーメッセージを表示します</small></p></div></div>-->
+                                        <div class="row" th:if="${#fields.hasErrors('*{naiyo}')}"><div class="col-sm-10"><p class="form-control-static text-danger"><small th:errors="*{naiyo}">ここにエラーメッセージを表示します</small></p></div></div>
                                     </div>
                                 </div>
                             </div>
