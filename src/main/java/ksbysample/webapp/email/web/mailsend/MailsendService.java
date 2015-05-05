@@ -29,7 +29,7 @@ public class MailsendService {
 
     @Transactional(rollbackFor = Exception.class)
     public void saveAndSendEmail(MailsendForm mailsendForm) {
-        // 入力されたデータを EMAIL, EMAIL_ITEM テーブルに保存する
+        // 入力されたデータを email, email_item テーブルに保存する
         saveEmail(mailsendForm);
 
         // メールを送信する
@@ -37,12 +37,12 @@ public class MailsendService {
     }
 
     public void saveEmail(MailsendForm mailsendForm) {
-        // EMAIL テーブルに保存する
+        // email テーブルに保存する
         Email email = new Email();
         BeanUtils.copyProperties(mailsendForm, email);
         emailDao.insert(email);
 
-        // EMAIL_ITEM テーブルに保存する
+        // email_item テーブルに保存する
         for (String item : mailsendForm.getItem()) {
             EmailItem emailItem = new EmailItem();
             emailItem.setEmailId(email.getEmailId());
