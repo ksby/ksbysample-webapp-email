@@ -1,18 +1,18 @@
-CREATE TABLE EMAIL
+CREATE TABLE email
 (
-    EMAIL_ID        bigserial primary key
-    , FROM_ADDR     varchar(65) not null
-    , TO_ADDR       varchar(65) not null
-    , SUBJECT       varchar(128) not null
-    , NAME          varchar(32)
-    , SEX           smallint
-    , TYPE          smallint
-    , NAIYO         text
+    email_id        bigserial primary key
+    , from_addr     varchar(65) not null
+    , to_addr       varchar(65) not null
+    , subject       varchar(128) not null
+    , name          varchar(32)
+    , sex           smallint
+    , type          smallint
+    , naiyo         text
 );
 
-CREATE TABLE EMAIL_ITEM
+CREATE TABLE email_item
 (
-    EMAIL_ITEM_ID   bigserial primary key
-    , EMAIL_ID      bigint not null references EMAIL(EMAIL_ID) on delete cascade
-    , ITEM          smallint
+    email_item_id   bigserial primary key
+    , email_id      bigint not null references EMAIL(email_id) on delete cascade
+    , item          smallint
 );
