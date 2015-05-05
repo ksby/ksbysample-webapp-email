@@ -33,6 +33,10 @@ idea {
     }
 }
 
+configurations {
+    domaGenRuntime
+}
+
 repositories {
     jcenter()
     // for org.seasar.doma:doma
@@ -40,6 +44,8 @@ repositories {
 }
 
 dependencies {
+    def jdbcDriver = "org.postgresql:postgresql:9.4-1201-jdbc41"
+
     // spring-boot-gradle-plugin によりバージョン番号が自動で設定されるもの
     // Appendix E. Dependency versions ( http://docs.spring.io/spring-boot/docs/current/reference/html/appendix-dependency-versions.html ) 参照
     compile("org.springframework.boot:spring-boot-starter-web")
@@ -52,12 +58,16 @@ dependencies {
     testCompile("org.yaml:snakeyaml")
 
     // spring-boot-gradle-plugin によりバージョン番号が自動で設定されないもの
-    compile("org.postgresql:postgresql:9.4-1201-jdbc41")
+    compile("${jdbcDriver}")
     compile("org.seasar.doma:doma:2.2.0")
     compile("org.bgee.log4jdbc-log4j2:log4jdbc-log4j2-jdbc4.1:1.16")
     compile("org.apache.commons:commons-lang3:3.4")
     compile("org.projectlombok:lombok:1.16.2")
     testCompile("org.dbunit:dbunit:2.5.0")
+
+    // for Doma-Gen
+    domaGenRuntime("org.seasar.doma:doma-gen:2.2.0")
+    domaGenRuntime("${jdbcDriver}")
 }
 
 bootRun {
@@ -66,4 +76,17 @@ bootRun {
 
 test {
     jvmArgs = ['-Dspring.profiles.active=unittest']
+}
+
+// for Doma-Gen
+task gen << {
+    def rootPackageName = 'ksbysample.webapp.email'
+
+    ant.taskdef(resource: 'domagentask.properties',
+            classpath: configurations.domaGenRuntime.asPath)
+    ant.gen(url: 'jdbc:postgresql://localhost/ksbyemail', user: 'ksbyemail_user', password: 'xxxxxxxx') {
+        entityConfig(packageName: "${rootPackageName}.entity", useListener: false)
+        daoConfig(packageName: "${rootPackageName}.dao")
+        sqlConfig()
+    }
 }
