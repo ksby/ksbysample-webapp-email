@@ -18,7 +18,7 @@
     </tx:advice>
 
     <aop:config>
-        <aop:pointcut id="pointcutService" expression="execution(* ksbysample.webapp.email.service..*Service.*(..))"/>
+        <aop:pointcut id="pointcutService" expression="execution(* ksbysample.webapp.email..*Service.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="pointcutService"/>
     </aop:config>
 
