@@ -27,7 +27,6 @@ public class MailsendService {
     @Autowired
     private EmailService emailService;
 
-    @Transactional(rollbackFor = Exception.class)
     public void saveAndSendEmail(MailsendForm mailsendForm) {
         // 入力されたデータを email, email_item テーブルに保存する
         saveEmail(mailsendForm);
