@@ -42,8 +42,9 @@ public class MailsendService {
         emailDao.insert(email);
 
         // email_item テーブルに保存する
+        EmailItem emailItem = new EmailItem();
         for (String item : mailsendForm.getItem()) {
-            EmailItem emailItem = new EmailItem();
+            emailItem.setEmailItemId(null);
             emailItem.setEmailId(email.getEmailId());
             emailItem.setItem(item);
             emailItemDao.insert(emailItem);
