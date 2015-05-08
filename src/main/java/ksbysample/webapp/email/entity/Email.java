@@ -1,6 +1,11 @@
 package ksbysample.webapp.email.entity;
 
-import org.seasar.doma.*;
+import org.seasar.doma.Column;
+import org.seasar.doma.Entity;
+import org.seasar.doma.GeneratedValue;
+import org.seasar.doma.GenerationType;
+import org.seasar.doma.Id;
+import org.seasar.doma.Table;
 
 /**
  */
@@ -32,11 +37,11 @@ public class Email {
 
     /** */
     @Column(name = "sex")
-    Short sex;
+    String sex;
 
     /** */
     @Column(name = "type")
-    Short type;
+    String type;
 
     /** */
     @Column(name = "naiyo")
@@ -137,7 +142,7 @@ public class Email {
      * 
      * @return the sex
      */
-    public Short getSex() {
+    public String getSex() {
         return sex;
     }
 
@@ -146,7 +151,7 @@ public class Email {
      * 
      * @param sex the sex
      */
-    public void setSex(Short sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
@@ -155,7 +160,7 @@ public class Email {
      * 
      * @return the type
      */
-    public Short getType() {
+    public String getType() {
         return type;
     }
 
@@ -164,7 +169,7 @@ public class Email {
      * 
      * @param type the type
      */
-    public void setType(Short type) {
+    public void setType(String type) {
         this.type = type;
     }
 

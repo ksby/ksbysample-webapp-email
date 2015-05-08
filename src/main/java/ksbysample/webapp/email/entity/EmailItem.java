@@ -1,6 +1,11 @@
 package ksbysample.webapp.email.entity;
 
-import org.seasar.doma.*;
+import org.seasar.doma.Column;
+import org.seasar.doma.Entity;
+import org.seasar.doma.GeneratedValue;
+import org.seasar.doma.GenerationType;
+import org.seasar.doma.Id;
+import org.seasar.doma.Table;
 
 /**
  */
@@ -20,7 +25,7 @@ public class EmailItem {
 
     /** */
     @Column(name = "item")
-    Short item;
+    String item;
 
     /** 
      * Returns the emailItemId.
@@ -63,16 +68,16 @@ public class EmailItem {
      * 
      * @return the item
      */
-    public Short getItem() {
+    public String getItem() {
         return item;
     }
 
     /** 
      * Sets the item.
-     * 
+     *
      * @param item the item
      */
-    public void setItem(Short item) {
+    public void setItem(String item) {
         this.item = item;
     }
 }

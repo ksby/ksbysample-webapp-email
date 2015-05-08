@@ -45,7 +45,7 @@ public class MailsendService {
         for (String item : mailsendForm.getItem()) {
             EmailItem emailItem = new EmailItem();
             emailItem.setEmailId(email.getEmailId());
-            emailItem.setItem(Short.parseShort(item));
+            emailItem.setItem(item);
             emailItemDao.insert(emailItem);
         }
     }
