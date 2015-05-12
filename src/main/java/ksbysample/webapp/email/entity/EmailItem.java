@@ -74,7 +74,7 @@ public class EmailItem {
 
     /** 
      * Sets the item.
-     *
+     * 
      * @param item the item
      */
     public void setItem(String item) {
