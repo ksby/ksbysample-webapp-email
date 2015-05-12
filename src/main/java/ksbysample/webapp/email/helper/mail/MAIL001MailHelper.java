@@ -1,46 +1,34 @@
-package ksbysample.webapp.email.web.mailsend;
+package ksbysample.webapp.email.helper.mail;
 
 import ksbysample.webapp.email.config.Constant;
 import ksbysample.webapp.email.util.VelocityUtils;
+import ksbysample.webapp.email.web.mailsend.MailsendForm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MAIL001MailBuilder {
+@Component
+public class MAIL001MailHelper {
 
-    private MailsendForm mailsendForm;
+    private final String templateLocation = "mail/MAIL001/MAIL001-body.vm";
 
+    @Autowired
     private VelocityUtils velocityUtils;
 
-    private String templateLocation;
-
-    public static MAIL001MailBuilder build() {
-        return new MAIL001MailBuilder();
-    }
-
-    public MAIL001MailBuilder setForm(MailsendForm mailsendForm) {
-        this.mailsendForm = mailsendForm;
-        return this;
-    }
-
-    public MAIL001MailBuilder setVelocityUtils(VelocityUtils velocityUtils) {
-        this.velocityUtils = velocityUtils;
-        return this;
-    }
-
-    public MAIL001MailBuilder setTemplateLocation(String templateLocation) {
-        this.templateLocation = templateLocation;
-        return this;
-    }
-
-    public SimpleMailMessage create() {
+    public SimpleMailMessage createMessage(MailsendForm mailsendForm) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(mailsendForm.getFromAddr());
         mailMessage.setTo(mailsendForm.getToAddr());
         mailMessage.setSubject(mailsendForm.getSubject());
+        mailMessage.setText(generateTextUsingVelocity(mailsendForm));
+        return mailMessage;
+    }
 
+    private String generateTextUsingVelocity(MailsendForm mailsendForm) {
         Constant constant = Constant.getInstance();
         Map<String, Object> model = new HashMap<>();
         model.put("name", mailsendForm.getName());
@@ -53,9 +41,7 @@ public class MAIL001MailBuilder {
         model.put("item", itemList);
 
         model.put("naiyo", mailsendForm.getNaiyo());
-        mailMessage.setText(velocityUtils.merge(this.templateLocation, model));
-
-        return mailMessage;
+        return velocityUtils.merge(this.templateLocation, model);
     }
 
 }

@@ -4,13 +4,12 @@ import ksbysample.webapp.email.dao.EmailDao;
 import ksbysample.webapp.email.dao.EmailItemDao;
 import ksbysample.webapp.email.entity.Email;
 import ksbysample.webapp.email.entity.EmailItem;
+import ksbysample.webapp.email.helper.mail.MAIL001MailHelper;
 import ksbysample.webapp.email.service.EmailService;
-import ksbysample.webapp.email.util.VelocityUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MailsendService {
@@ -22,7 +21,7 @@ public class MailsendService {
     private EmailItemDao emailItemDao;
 
     @Autowired
-    private VelocityUtils velocityUtils;
+    private MAIL001MailHelper mail001MailHelper;
 
     @Autowired
     private EmailService emailService;
@@ -52,11 +51,7 @@ public class MailsendService {
     }
 
     public void sendEmail(MailsendForm mailsendForm) {
-        SimpleMailMessage mailMessage = MAIL001MailBuilder.build()
-                .setForm(mailsendForm)
-                .setVelocityUtils(velocityUtils)
-                .setTemplateLocation("mail/MAIL001/MAIL001-body.vm")
-                .create();
+        SimpleMailMessage mailMessage = mail001MailHelper.createMessage(mailsendForm);
         emailService.sendSimpleMail(mailMessage);
     }
 
