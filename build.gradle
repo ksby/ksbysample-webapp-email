@@ -8,6 +8,8 @@ buildscript {
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
         classpath("org.springframework:springloaded:1.2.3.RELEASE")
+        // for Grgit
+        classpath("org.ajoberstar:grgit:1.1.0")
     }
 }
 
@@ -88,5 +90,9 @@ task gen << {
         entityConfig(packageName: "${rootPackageName}.entity", useListener: false)
         daoConfig(packageName: "${rootPackageName}.dao")
         sqlConfig()
+
+        // 自動生成したファイルを git add する
+        def grgit = org.ajoberstar.grgit.Grgit.open(dir: project.projectDir)
+        grgit.add(patterns: ['.'])
     }
 }
