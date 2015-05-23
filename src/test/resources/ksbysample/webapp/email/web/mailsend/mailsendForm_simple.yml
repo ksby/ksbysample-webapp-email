@@ -1,0 +1,12 @@
+!!ksbysample.webapp.email.web.mailsend.MailsendForm
+fromAddr: test@sample.com
+toAddr: xxx@yyy.zzz
+subject: テスト
+name: 田中　太郎
+sex: 1
+type: 1
+item:
+  - 101
+  - 102
+  - 103
+naiyo: これはテストです。

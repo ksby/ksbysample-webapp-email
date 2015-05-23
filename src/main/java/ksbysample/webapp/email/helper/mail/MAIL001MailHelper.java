@@ -35,9 +35,12 @@ public class MAIL001MailHelper {
         model.put("sex", constant.SEX_MAP.get(mailsendForm.getSex()));
         model.put("type", constant.TYPE_MAP.get(mailsendForm.getType()));
 
-        String itemList = mailsendForm.getItem().stream()
-                .map(constant.ITEM_MAP::get)
-                .collect(Collectors.joining(", "));
+        String itemList = null;
+        if (mailsendForm.getItem() != null) {
+            itemList = mailsendForm.getItem().stream()
+                    .map(constant.ITEM_MAP::get)
+                    .collect(Collectors.joining(", "));
+        }
         model.put("item", itemList);
 
         model.put("naiyo", mailsendForm.getNaiyo());

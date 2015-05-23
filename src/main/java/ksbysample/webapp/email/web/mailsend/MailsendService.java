@@ -42,11 +42,13 @@ public class MailsendService {
 
         // email_item テーブルに保存する
         EmailItem emailItem = new EmailItem();
-        for (String item : mailsendForm.getItem()) {
-            emailItem.setEmailItemId(null);
-            emailItem.setEmailId(email.getEmailId());
-            emailItem.setItem(item);
-            emailItemDao.insert(emailItem);
+        if (mailsendForm.getItem() != null) {
+            for (String item : mailsendForm.getItem()) {
+                emailItem.setEmailItemId(null);
+                emailItem.setEmailId(email.getEmailId());
+                emailItem.setItem(item);
+                emailItemDao.insert(emailItem);
+            }
         }
     }
 

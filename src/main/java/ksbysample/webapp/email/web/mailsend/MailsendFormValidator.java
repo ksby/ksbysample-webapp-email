@@ -22,7 +22,7 @@ public class MailsendFormValidator implements Validator {
         // 「項目」が「資料請求」「商品に関する苦情」の場合には「商品」が何も選択されていない場合にはエラー
         if (StringUtils.equals(mailsendForm.getType(), "1")
                 || StringUtils.equals(mailsendForm.getType(), "2")) {
-            if (mailsendForm.getItem() == null) {
+            if ((mailsendForm.getItem() == null) || (mailsendForm.getItem().size() == 0)) {
                 errors.reject("mailsendForm.item.noSelect");
             }
         }
