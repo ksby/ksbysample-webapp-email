@@ -1,0 +1,9 @@
+!!ksbysample.webapp.email.web.mailsend.MailsendForm
+fromAddr: test@sample.com
+toAddr: xxx@yyy.zzz
+subject: テスト
+name: 
+sex: 
+type: 
+item: 
+naiyo: 

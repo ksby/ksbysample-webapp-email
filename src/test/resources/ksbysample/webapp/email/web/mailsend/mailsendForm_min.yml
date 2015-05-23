@@ -1,0 +1,10 @@
+!!ksbysample.webapp.email.web.mailsend.MailsendForm
+fromAddr: a@a
+toAddr: b@b
+subject: テ
+name: あ
+sex: 1
+type: 1
+item: 
+  - 101
+naiyo: い
