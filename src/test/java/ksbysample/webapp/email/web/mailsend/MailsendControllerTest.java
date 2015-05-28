@@ -166,6 +166,33 @@ public class MailsendControllerTest {
                     .andExpect(model().hasNoErrors())
                     .andExpect(model().errorCount(0));
         }
+
+        @Test
+        public void 最小値空ありでHTML送信ボタンをクリックした場合() throws Exception {
+            mvc.nonauth.perform(TestHelper.postForm("/mailsend/sendhtml", this.mailsendFormMinimum))
+                    .andExpect(status().isFound())
+                    .andExpect(redirectedUrl("/mailsend"))
+                    .andExpect(model().hasNoErrors())
+                    .andExpect(model().errorCount(0));
+        }
+
+        @Test
+        public void 最小値でHTML送信ボタンをクリックした場合() throws Exception {
+            mvc.nonauth.perform(TestHelper.postForm("/mailsend/sendhtml", this.mailsendFormMin))
+                    .andExpect(status().isFound())
+                    .andExpect(redirectedUrl("/mailsend"))
+                    .andExpect(model().hasNoErrors())
+                    .andExpect(model().errorCount(0));
+        }
+
+        @Test
+        public void 最大値でHTML送信ボタンをクリックした場合() throws Exception {
+            mvc.nonauth.perform(TestHelper.postForm("/mailsend/sendhtml", this.mailsendFormMax))
+                    .andExpect(status().isFound())
+                    .andExpect(redirectedUrl("/mailsend"))
+                    .andExpect(model().hasNoErrors())
+                    .andExpect(model().errorCount(0));
+        }
         
     }
 

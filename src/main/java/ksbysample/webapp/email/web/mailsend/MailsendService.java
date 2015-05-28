@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
 @Service
 public class MailsendService {
 
@@ -34,7 +37,15 @@ public class MailsendService {
         sendEmail(mailsendForm);
     }
 
-    public void saveEmail(MailsendForm mailsendForm) {
+    public void saveAndSendHtmlEmail(MailsendForm mailsendForm) throws MessagingException {
+        // 入力されたデータを email, email_item テーブルに保存する
+        saveEmail(mailsendForm);
+
+        // HTMLメールを送信する
+        sendHtmlEmail(mailsendForm);
+    }
+
+    private void saveEmail(MailsendForm mailsendForm) {
         // email テーブルに保存する
         Email email = new Email();
         BeanUtils.copyProperties(mailsendForm, email);
@@ -52,9 +63,14 @@ public class MailsendService {
         }
     }
 
-    public void sendEmail(MailsendForm mailsendForm) {
-        SimpleMailMessage mailMessage = mail001MailHelper.createMessage(mailsendForm);
-        emailService.sendSimpleMail(mailMessage);
+    private void sendEmail(MailsendForm mailsendForm) {
+        SimpleMailMessage message = mail001MailHelper.createMessage(mailsendForm);
+        emailService.sendSimpleMail(message);
+    }
+
+    private void sendHtmlEmail(MailsendForm mailsendForm) throws MessagingException {
+        MimeMessage message = mail001MailHelper.createHtmlMessage(mailsendForm);
+        emailService.sendMail(message);
     }
 
 }

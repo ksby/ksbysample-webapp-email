@@ -9,6 +9,8 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.mail.MessagingException;
+
 @Controller
 @RequestMapping("/mailsend")
 public class MailsendController {
@@ -44,4 +46,18 @@ public class MailsendController {
         return "redirect:/mailsend";
     }
 
+    @RequestMapping("/sendhtml")
+    public String sendhtml(@Validated MailsendForm mailsendForm
+            , BindingResult bindingResult
+            , Model model) throws MessagingException {
+        if (bindingResult.hasErrors()) {
+            return "mailsend/mailsend";
+        }
+
+        // 入力されたデータをDBに保存した後、HTMLメールを送信する
+        mailsendService.saveAndSendHtmlEmail(mailsendForm);
+
+        return "redirect:/mailsend";
+    }
+    
 }
