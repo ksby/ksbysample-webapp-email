@@ -1,18 +1,24 @@
 package ksbysample.webapp.email.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+import javax.mail.internet.MimeMessage;
 
 @Service
 public class EmailService {
 
     @Autowired
-    private MailSender mailSender;
+    private JavaMailSender mailSender;
 
     public void sendSimpleMail(SimpleMailMessage mailMessage) {
         mailSender.send(mailMessage);
+    }
+    
+    public void sendMail(MimeMessage message) {
+        mailSender.send(message);
     }
 
 }

@@ -4,9 +4,16 @@ import ksbysample.webapp.email.config.Constant;
 import ksbysample.webapp.email.util.VelocityUtils;
 import ksbysample.webapp.email.web.mailsend.MailsendForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring4.SpringTemplateEngine;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,11 +21,19 @@ import java.util.stream.Collectors;
 @Component
 public class MAIL001MailHelper {
 
-    private final String templateLocation = "mail/MAIL001/MAIL001-body.vm";
+    private final String TEMPLATE_LOCATION_TEXTMAIL = "mail/MAIL001/MAIL001-body.vm";
+    // templateEngine.processに渡すThymeleafのテンプレートファイルは拡張子.html付けないこと
+    private final String TEMPLATE_LOCATION_HTMLMAIL = "mail/MAIL001/MAIL001-HTML-body";
 
     @Autowired
     private VelocityUtils velocityUtils;
 
+    @Autowired
+    private JavaMailSender mailSender;
+    
+    @Autowired
+    private SpringTemplateEngine templateEngine;
+    
     public SimpleMailMessage createMessage(MailsendForm mailsendForm) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(mailsendForm.getFromAddr());
@@ -26,6 +41,16 @@ public class MAIL001MailHelper {
         mailMessage.setSubject(mailsendForm.getSubject());
         mailMessage.setText(generateTextUsingVelocity(mailsendForm));
         return mailMessage;
+    }
+
+    public MimeMessage createHtmlMessage(MailsendForm mailsendForm) throws MessagingException {
+        MimeMessage mimeMessage = this.mailSender.createMimeMessage();
+        MimeMessageHelper message = new MimeMessageHelper(mimeMessage, false, "UTF-8");
+        message.setFrom(mailsendForm.getFromAddr());
+        message.setTo(mailsendForm.getToAddr());
+        message.setSubject(mailsendForm.getSubject());
+        message.setText(generateTextUsingThymeleaf(mailsendForm), true);
+        return message.getMimeMessage();
     }
 
     private String generateTextUsingVelocity(MailsendForm mailsendForm) {
@@ -44,7 +69,27 @@ public class MAIL001MailHelper {
         model.put("item", itemList);
 
         model.put("naiyo", mailsendForm.getNaiyo());
-        return velocityUtils.merge(this.templateLocation, model);
+        return velocityUtils.merge(this.TEMPLATE_LOCATION_TEXTMAIL, model);
     }
 
+    private String generateTextUsingThymeleaf(MailsendForm mailsendForm) {
+        Constant constant = Constant.getInstance();
+        Context ctx = new Context(LocaleContextHolder.getLocale());
+        ctx.setVariable("name", mailsendForm.getName());
+        ctx.setVariable("sex", constant.SEX_MAP.get(mailsendForm.getSex()));
+        ctx.setVariable("type", constant.TYPE_MAP.get(mailsendForm.getType()));
+
+        String itemList = null;
+        if (mailsendForm.getItem() != null) {
+            itemList = mailsendForm.getItem().stream()
+                    .map(constant.ITEM_MAP::get)
+                    .collect(Collectors.joining(", "));
+        }
+        ctx.setVariable("item", itemList);
+
+        ctx.setVariable("naiyo", mailsendForm.getNaiyo());
+        
+        return this.templateEngine.process(this.TEMPLATE_LOCATION_HTMLMAIL, ctx);
+    }
+    
 }

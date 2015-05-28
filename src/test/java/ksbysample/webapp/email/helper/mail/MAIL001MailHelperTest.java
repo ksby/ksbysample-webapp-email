@@ -1,42 +1,120 @@
 package ksbysample.webapp.email.helper.mail;
 
 import ksbysample.webapp.email.Application;
+import ksbysample.webapp.email.config.Constant;
 import ksbysample.webapp.email.web.mailsend.MailsendForm;
 import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.yaml.snakeyaml.Yaml;
 
-import static org.hamcrest.Matchers.is;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.StringReader;
+import java.util.stream.Collectors;
+
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
+@RunWith(Enclosed.class)
 public class MAIL001MailHelperTest {
 
-    private final MailsendForm mailsendFormSimple
-            = (MailsendForm) new Yaml().load(getClass().getResourceAsStream("/ksbysample/webapp/email/web/mailsend/mailsendForm_simple.yml"));
-    private final MailsendForm mailsendFormMinimum
-            = (MailsendForm) new Yaml().load(getClass().getResourceAsStream("/ksbysample/webapp/email/web/mailsend/mailsendForm_minimum.yml"));
+    @RunWith(SpringJUnit4ClassRunner.class)
+    @SpringApplicationConfiguration(classes = Application.class)
+    @WebAppConfiguration
+    public static class テキストメール生成のテスト {
 
-    @Autowired
-    private MAIL001MailHelper mail001MailHelper;
+        private final MailsendForm mailsendFormSimple
+                = (MailsendForm) new Yaml().load(getClass().getResourceAsStream("/ksbysample/webapp/email/web/mailsend/mailsendForm_simple.yml"));
+        private final MailsendForm mailsendFormMinimum
+                = (MailsendForm) new Yaml().load(getClass().getResourceAsStream("/ksbysample/webapp/email/web/mailsend/mailsendForm_minimum.yml"));
 
-    @Test
-    public void MailsendFormの全てに値がセットされている場合() throws Exception {
-        SimpleMailMessage message = mail001MailHelper.createMessage(mailsendFormSimple);
-        assertThat(message.getFrom(), is(mailsendFormSimple.getFromAddr()));
+        @Autowired
+        private MAIL001MailHelper mail001MailHelper;
+
+        @Test
+        public void MailsendFormの全てに値がセットされている場合() throws Exception {
+            SimpleMailMessage message = mail001MailHelper.createMessage(mailsendFormSimple);
+            assertThat(message.getFrom(), is(mailsendFormSimple.getFromAddr()));
+        }
+
+        @Test
+        public void MailsendFormの必須項目のみ値がセットされている場合() throws Exception {
+            SimpleMailMessage message = mail001MailHelper.createMessage(mailsendFormMinimum);
+            assertThat(message.getFrom(), is(mailsendFormMinimum.getFromAddr()));
+        }
+
     }
 
-    @Test
-    public void MailsendFormの必須項目のみ値がセットされている場合() throws Exception {
-        SimpleMailMessage message = mail001MailHelper.createMessage(mailsendFormMinimum);
-        assertThat(message.getFrom(), is(mailsendFormMinimum.getFromAddr()));
+    @RunWith(SpringJUnit4ClassRunner.class)
+    @SpringApplicationConfiguration(classes = Application.class)
+    @WebAppConfiguration
+    public static class HTMLメール生成のテスト {
+
+        private final MailsendForm mailsendFormSimple
+                = (MailsendForm) new Yaml().load(getClass().getResourceAsStream("/ksbysample/webapp/email/web/mailsend/mailsendForm_simple.yml"));
+        private final MailsendForm mailsendFormMinimum
+                = (MailsendForm) new Yaml().load(getClass().getResourceAsStream("/ksbysample/webapp/email/web/mailsend/mailsendForm_minimum.yml"));
+
+        @Autowired
+        private MAIL001MailHelper mail001MailHelper;
+
+        @Test
+        public void MailsendFormの全てに値がセットされている場合() throws Exception {
+            MimeMessage message = mail001MailHelper.createHtmlMessage(mailsendFormSimple);
+
+            // from, Subject
+            InternetAddress address = (InternetAddress) message.getFrom()[0];
+            assertThat(address.getAddress(), is(mailsendFormSimple.getFromAddr()));
+            assertThat(message.getSubject(), is(mailsendFormSimple.getSubject()));
+
+            // メール本文
+            Document document = DocumentBuilderFactory
+                    .newInstance()
+                    .newDocumentBuilder()
+                    .parse(new InputSource(new StringReader((String) message.getContent())));
+            Constant constant = Constant.getInstance();
+            assertThat(document, hasXPath("//*[@id=\"name\"]", equalTo(mailsendFormSimple.getName())));
+            assertThat(document, hasXPath("//*[@id=\"sex\"]", equalTo(constant.SEX_MAP.get(mailsendFormSimple.getSex()))));
+            assertThat(document, hasXPath("//*[@id=\"type\"]", equalTo(constant.TYPE_MAP.get(mailsendFormSimple.getType()))));
+            assertThat(document, hasXPath("//*[@id=\"item\"]"
+                    , equalTo(
+                    mailsendFormSimple.getItem().stream()
+                            .map(constant.ITEM_MAP::get)
+                            .collect(Collectors.joining(", ")))));
+            assertThat(document, hasXPath("//*[@id=\"naiyo\"]", equalTo(mailsendFormSimple.getNaiyo())));
+        }
+
+        @Test
+        public void MailsendFormの必須項目のみ値がセットされている場合() throws Exception {
+            MimeMessage message = mail001MailHelper.createHtmlMessage(mailsendFormMinimum);
+
+            // from, Subject
+            InternetAddress address = (InternetAddress) message.getFrom()[0];
+            assertThat(address.getAddress(), is(mailsendFormMinimum.getFromAddr()));
+            assertThat(message.getSubject(), is(mailsendFormMinimum.getSubject()));
+
+            // メール本文
+            Document document = DocumentBuilderFactory
+                    .newInstance()
+                    .newDocumentBuilder()
+                    .parse(new InputSource(new StringReader((String) message.getContent())));
+            Constant constant = Constant.getInstance();
+            assertThat(document, hasXPath("//*[@id=\"name\"]", equalTo("")));
+            assertThat(document, hasXPath("//*[@id=\"sex\"]", equalTo("")));
+            assertThat(document, hasXPath("//*[@id=\"type\"]", equalTo("")));
+            assertThat(document, hasXPath("//*[@id=\"item\"]", equalTo("")));
+            assertThat(document, hasXPath("//*[@id=\"naiyo\"]", equalTo("")));
+        }
+
     }
 
 }

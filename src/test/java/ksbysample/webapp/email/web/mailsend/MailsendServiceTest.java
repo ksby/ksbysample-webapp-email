@@ -2,6 +2,7 @@ package ksbysample.webapp.email.web.mailsend;
 
 import com.google.common.io.Files;
 import ksbysample.webapp.email.Application;
+import ksbysample.webapp.email.config.Constant;
 import ksbysample.webapp.email.test.MailServerResource;
 import ksbysample.webapp.email.test.TableDataAssert;
 import ksbysample.webapp.email.test.TestDataResource;
@@ -14,15 +15,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.sql.DataSource;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -30,8 +36,10 @@ import static org.junit.Assert.assertThat;
 @WebAppConfiguration
 public class MailsendServiceTest {
 
+    // MailsendFormの全てに値がセットされているテストデータ
     private final MailsendForm mailsendFormSimple
             = (MailsendForm) new Yaml().load(getClass().getResourceAsStream("mailsendForm_simple.yml"));
+    // MailsendFormの必須項目のみ値がセットされているテストデータ
     private final MailsendForm mailsendFormMinimum
             = (MailsendForm) new Yaml().load(getClass().getResourceAsStream("mailsendForm_minimum.yml"));
 
@@ -50,7 +58,7 @@ public class MailsendServiceTest {
     private MailsendService mailsendService;
 
     @Test
-    public void MailsendFormの全てに値がセットされている場合() throws Exception {
+    public void mailsendFormSimpleでテキストメールを送信する場合() throws Exception {
         mailsendService.saveAndSendEmail(mailsendFormSimple);
 
         // email, email_item テーブルに保存されているか確認する
@@ -71,7 +79,7 @@ public class MailsendServiceTest {
     }
 
     @Test
-    public void MailsendFormの必須項目のみ値がセットされている場合() throws Exception {
+    public void mailsendFormMinimumでテキストメールを送信する場合() throws Exception {
         mailsendService.saveAndSendEmail(mailsendFormMinimum);
 
         // email, email_item テーブルに保存されているか確認する
@@ -89,6 +97,70 @@ public class MailsendServiceTest {
         String mailsendFormMinimumMail
                 = Files.toString(new File(getClass().getResource("mailsendForm_minimum_mail.txt").toURI()), StandardCharsets.UTF_8);
         assertThat(receiveMessage.getContent(), is(mailsendFormMinimumMail));
+    }
+
+    @Test
+    public void mailsendFormSimpleでHTMLメールを送信する場合() throws Exception {
+        mailsendService.saveAndSendHtmlEmail(mailsendFormSimple);
+
+        // email, email_item テーブルに保存されているか確認する
+        IDataSet dataSet = new CsvDataSet(new File("src/test/resources/ksbysample/webapp/email/web/mailsend/testdata/simple"));
+        TableDataAssert tableDataAssert = new TableDataAssert(dataSet, dataSource);
+        tableDataAssert.assertEquals("email", new String[]{"email_id"});
+        tableDataAssert.assertEquals("email_item", new String[]{"email_item_id", "email_id"});
+
+        // メールが送信されているか確認する
+        assertThat(mailServer.getMessagesCount(), is(1));
+        MimeMessage receiveMessage = mailServer.getFirstMessage();
+        assertThat(receiveMessage.getFrom()[0], is(new InternetAddress("test@sample.com")));
+        assertThat(receiveMessage.getAllRecipients()[0], is(new InternetAddress("xxx@yyy.zzz")));
+        assertThat(receiveMessage.getSubject(), is("テスト"));
+
+        // メール本文
+        Document document = DocumentBuilderFactory
+                .newInstance()
+                .newDocumentBuilder()
+                .parse(new InputSource(new StringReader((String) receiveMessage.getContent())));
+        Constant constant = Constant.getInstance();
+        assertThat(document, hasXPath("//*[@id=\"name\"]", equalTo(mailsendFormSimple.getName())));
+        assertThat(document, hasXPath("//*[@id=\"sex\"]", equalTo(constant.SEX_MAP.get(mailsendFormSimple.getSex()))));
+        assertThat(document, hasXPath("//*[@id=\"type\"]", equalTo(constant.TYPE_MAP.get(mailsendFormSimple.getType()))));
+        assertThat(document, hasXPath("//*[@id=\"item\"]"
+                , equalTo(
+                mailsendFormSimple.getItem().stream()
+                        .map(constant.ITEM_MAP::get)
+                        .collect(Collectors.joining(", ")))));
+        assertThat(document, hasXPath("//*[@id=\"naiyo\"]", equalTo(mailsendFormSimple.getNaiyo())));
+    }
+
+    @Test
+    public void mailsendFormMinimumでHTMLメールを送信する場合() throws Exception {
+        mailsendService.saveAndSendHtmlEmail(mailsendFormMinimum);
+
+        // email, email_item テーブルに保存されているか確認する
+        IDataSet dataSet = new CsvDataSet(new File("src/test/resources/ksbysample/webapp/email/web/mailsend/testdata/minimum"));
+        TableDataAssert tableDataAssert = new TableDataAssert(dataSet, dataSource);
+        tableDataAssert.assertEquals("email", new String[]{"email_id"});
+        tableDataAssert.assertEquals("email_item", new String[]{"email_item_id", "email_id"});
+
+        // メールが送信されているか確認する
+        assertThat(mailServer.getMessagesCount(), is(1));
+        MimeMessage receiveMessage = mailServer.getFirstMessage();
+        assertThat(receiveMessage.getFrom()[0], is(new InternetAddress("test@sample.com")));
+        assertThat(receiveMessage.getAllRecipients()[0], is(new InternetAddress("xxx@yyy.zzz")));
+        assertThat(receiveMessage.getSubject(), is("テスト"));
+
+        // メール本文
+        Document document = DocumentBuilderFactory
+                .newInstance()
+                .newDocumentBuilder()
+                .parse(new InputSource(new StringReader((String) receiveMessage.getContent())));
+        Constant constant = Constant.getInstance();
+        assertThat(document, hasXPath("//*[@id=\"name\"]", equalTo("")));
+        assertThat(document, hasXPath("//*[@id=\"sex\"]", equalTo("")));
+        assertThat(document, hasXPath("//*[@id=\"type\"]", equalTo("")));
+        assertThat(document, hasXPath("//*[@id=\"item\"]", equalTo("")));
+        assertThat(document, hasXPath("//*[@id=\"naiyo\"]", equalTo("")));
     }
 
 }

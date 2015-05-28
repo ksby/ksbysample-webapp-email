@@ -137,6 +137,7 @@
                             <div class="box-footer">
                                 <div class="text-center">
                                     <button type="button" id="send" value="send" class="btn btn-primary">送信</button>
+                                    <button type="button" id="sendhtml" value="sendhtml" class="btn btn-default">HTMLメール送信</button>
                                 </div>
                             </div>
                         </div>
@@ -160,6 +161,11 @@ $(document).ready(function() {
     $('#fromAddr').focus();
 
     $('#send').bind('click', function(){
+        $('#mailsendForm').submit();
+    });
+
+    $('#sendhtml').bind('click', function(){
+        $('#mailsendForm').attr('action', '/mailsend/sendhtml');
         $('#mailsendForm').submit();
     });
 });
