@@ -1,13 +1,10 @@
 buildscript {
     repositories {
         jcenter()
-        // for org.springframework:springloaded
-        maven { url "http://repo.spring.io/repo/" }
     }
 
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
-        classpath("org.springframework:springloaded:1.2.3.RELEASE")
         // for Grgit
         classpath("org.ajoberstar:grgit:1.1.0")
     }
