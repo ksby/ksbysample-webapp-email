@@ -3,7 +3,9 @@ package ksbysample.webapp.email.helper.mail;
 import ksbysample.webapp.email.config.Constant;
 import ksbysample.webapp.email.util.VelocityUtils;
 import ksbysample.webapp.email.web.mailsend.MailsendForm;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,6 +16,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +36,9 @@ public class MAIL001MailHelper {
     
     @Autowired
     private SpringTemplateEngine templateEngine;
+
+    @Value("${mailsend.attached.file}")
+    private String attachedFilePropertyValue;
     
     public SimpleMailMessage createMessage(MailsendForm mailsendForm) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -53,6 +59,26 @@ public class MAIL001MailHelper {
         return message.getMimeMessage();
     }
 
+    public MimeMessage createAttachedMessage(MailsendForm mailsendForm) throws MessagingException {
+        MimeMessage mimeMessage = this.mailSender.createMimeMessage();
+        MimeMessageHelper message = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+        message.setFrom(mailsendForm.getFromAddr());
+        message.setTo(mailsendForm.getToAddr());
+        message.setSubject(mailsendForm.getSubject());
+        message.setText(generateTextUsingVelocity(mailsendForm), false);
+
+        // ファイルを添付する
+        if (StringUtils.isNotEmpty(this.attachedFilePropertyValue)) {
+            File file = new File(this.attachedFilePropertyValue);
+            if (file.exists()) {
+                String fileName = file.getName();
+                message.addAttachment(fileName, file);
+            }
+        }
+        
+        return message.getMimeMessage();
+    }
+    
     private String generateTextUsingVelocity(MailsendForm mailsendForm) {
         Constant constant = Constant.getInstance();
         Map<String, Object> model = new HashMap<>();
