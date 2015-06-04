@@ -6,6 +6,7 @@ import ksbysample.webapp.email.entity.Email;
 import ksbysample.webapp.email.entity.EmailItem;
 import ksbysample.webapp.email.helper.mail.MAIL001MailHelper;
 import ksbysample.webapp.email.service.EmailService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -29,12 +30,17 @@ public class MailsendService {
     @Autowired
     private EmailService emailService;
 
-    public void saveAndSendEmail(MailsendForm mailsendForm) {
+    public void saveAndSendEmail(MailsendForm mailsendForm) throws MessagingException {
         // 入力されたデータを email, email_item テーブルに保存する
         saveEmail(mailsendForm);
 
         // メールを送信する
-        sendEmail(mailsendForm);
+        if (StringUtils.equals(mailsendForm.getAttachedFile(), "1")) {
+            sendAttachedEmail(mailsendForm);
+        }
+        else {
+            sendEmail(mailsendForm);
+        }
     }
 
     public void saveAndSendHtmlEmail(MailsendForm mailsendForm) throws MessagingException {
@@ -70,6 +76,11 @@ public class MailsendService {
 
     private void sendHtmlEmail(MailsendForm mailsendForm) throws MessagingException {
         MimeMessage message = mail001MailHelper.createHtmlMessage(mailsendForm);
+        emailService.sendMail(message);
+    }
+    
+    private void sendAttachedEmail(MailsendForm mailsendForm) throws MessagingException {
+        MimeMessage message = mail001MailHelper.createAttachedMessage(mailsendForm);
         emailService.sendMail(message);
     }
 

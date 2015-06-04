@@ -35,7 +35,7 @@ public class MailsendController {
     @RequestMapping("/send")
     public String send(@Validated MailsendForm mailsendForm
             , BindingResult bindingResult
-            , Model model) {
+            , Model model) throws MessagingException {
         if (bindingResult.hasErrors()) {
             return "mailsend/mailsend";
         }

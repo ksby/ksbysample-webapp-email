@@ -38,4 +38,6 @@ public class MailsendForm {
     @Size(max = 2000, message = "{error.size.max}")
     private String naiyo;
 
+    private String attachedFile;
+
 }

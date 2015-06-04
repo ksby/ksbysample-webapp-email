@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -15,9 +16,9 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.mail.internet.*;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 import java.io.StringReader;
 import java.util.stream.Collectors;
 
@@ -113,6 +114,35 @@ public class MAIL001MailHelperTest {
             assertThat(document, hasXPath("//*[@id=\"type\"]", equalTo("")));
             assertThat(document, hasXPath("//*[@id=\"item\"]", equalTo("")));
             assertThat(document, hasXPath("//*[@id=\"naiyo\"]", equalTo("")));
+        }
+
+    }
+
+    @RunWith(SpringJUnit4ClassRunner.class)
+    @SpringApplicationConfiguration(classes = Application.class)
+    @WebAppConfiguration
+    public static class 添付ファイル付テキストメール生成のテスト {
+
+        private final MailsendForm mailsendFormAttached
+                = (MailsendForm) new Yaml().load(getClass().getResourceAsStream("/ksbysample/webapp/email/web/mailsend/mailsendForm_attached.yml"));
+
+        @Autowired
+        private MAIL001MailHelper mail001MailHelper;
+
+        @Value("${mailsend.attached.file}")
+        private String attachedFilePropertyValue;
+
+        @Test
+        public void MailsendFormの全てに値がセットされている場合() throws Exception {
+            MimeMessage mimeMessage = mail001MailHelper.createAttachedMessage(mailsendFormAttached);
+            assertThat(mimeMessage.getContent(), instanceOf(MimeMultipart.class));
+            
+            MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
+            assertThat(mimeMultipart.getCount(), is(2));
+
+            MimeBodyPart bodyPart = (MimeBodyPart) mimeMultipart.getBodyPart(1);
+            File file = new File(this.attachedFilePropertyValue);
+            assertThat(MimeUtility.decodeText(bodyPart.getFileName()), is(file.getName()));
         }
 
     }
