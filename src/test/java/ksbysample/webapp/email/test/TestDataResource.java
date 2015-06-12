@@ -34,7 +34,7 @@ public class TestDataResource extends ExternalResource {
     private DataSource dataSource;
 
     private File backupFile;
-
+    
     @Override
     protected void before() throws Exception {
         IDatabaseConnection conn = null;
@@ -43,7 +43,7 @@ public class TestDataResource extends ExternalResource {
 
             // バックアップを取得する
             QueryDataSet partialDataSet = new QueryDataSet(conn);
-            for (String backupTable: BACKUP_TABLES) {
+            for (String backupTable : BACKUP_TABLES) {
                 partialDataSet.addTable(backupTable);
             }
             ReplacementDataSet replacementDatasetBackup = new ReplacementDataSet(partialDataSet);
@@ -58,8 +58,7 @@ public class TestDataResource extends ExternalResource {
             ReplacementDataSet replacementDataset = new ReplacementDataSet(dataSet);
             replacementDataset.addReplacementObject("[null]", null);
             DatabaseOperation.CLEAN_INSERT.execute(conn, replacementDataset);
-        }
-        finally {
+        } finally {
             if (conn != null) conn.close();
         }
     }
@@ -85,7 +84,8 @@ public class TestDataResource extends ExternalResource {
                 }
                 try {
                     if (conn != null) conn.close();
-                } catch (Exception ignored) {}
+                } catch (Exception ignored) {
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

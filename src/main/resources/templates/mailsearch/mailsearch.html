@@ -24,6 +24,10 @@
     , .table>thead>tr>th {
         padding: 5px;
     }
+    .checkbox label,
+    .radio label {
+        padding-right: 10px;
+    }
     -->
     </style>
 </head>
@@ -53,25 +57,25 @@
                         <div class="box-header with-border bg-purple-gradient">
                             <div class="row">
                                 <div class="col-xs-12">
-                                    <form id="mailSearchForm" method="post" action="/mailsearch" th:action="@{/mailsearch}" class="form-horizontal">
+                                    <form id="mailSearchForm" method="post" action="/mailsearch" th:action="@{/mailsearch}" th:object="${mailsearchForm}" class="form-horizontal">
                                         <div class="form-group">
-                                            <label for="to" class="control-label col-sm-2">To</label>
+                                            <label for="toAddr" class="control-label col-sm-2">To</label>
                                             <div class="col-sm-10">
-                                                <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="to" id="to" class="form-control input-sm" value="" placeholder=""/></div></div></div>
+                                                <div class="row"><div class="col-sm-8"><div class="input-group"><span class="input-group-addon"><i class="fa fa-envelope"></i></span><input type="text" name="toAddr" id="toAddr" class="form-control input-sm" value="" placeholder="" th:field="*{toAddr}"/></div></div></div>
                                             </div>
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="to" class="control-label col-sm-2">Subject</label>
+                                            <label for="subject" class="control-label col-sm-2">Subject</label>
                                             <div class="col-sm-10">
-                                                <div class="row"><div class="col-sm-12"><input type="text" name="subject" id="subject" class="form-control input-sm" value="" placeholder=""/></div></div>
+                                                <div class="row"><div class="col-sm-12"><input type="text" name="subject" id="subject" class="form-control input-sm" value="" placeholder="" th:field="*{subject}"/></div></div>
                                             </div>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="name" class="control-label col-sm-2">氏名</label>
                                             <div class="col-sm-10">
-                                                <div class="row"><div class="col-sm-8"><input type="text" name="name" id="name" class="form-control input-sm" value="" placeholder=""/></div></div>
+                                                <div class="row"><div class="col-sm-8"><input type="text" name="name" id="name" class="form-control input-sm" value="" placeholder="" th:field="*{name}"/></div></div>
                                             </div>
                                         </div>
 
@@ -80,9 +84,9 @@
                                             <div class="col-sm-10">
                                                 <div class="row"><div class="col-sm-12">
                                                     <div class="checkbox">
-                                                        <label><input type="checkbox" name="type" value="1"/>資料請求</label>　
-                                                        <label><input type="checkbox" name="type" value="2"/>商品に関する苦情</label>　
-                                                        <label><input type="checkbox" name="type" value="3"/>その他</label>
+                                                        <label th:each="type : ${T(ksbysample.webapp.email.config.Constant).getInstance().TYPE_MAP.entrySet()}">
+                                                            <input type="checkbox" name="type" th:value="${type.getKey()}" th:text="${type.getValue()}" th:field="*{type}"/>
+                                                        </label>
                                                     </div>
                                                 </div></div>
                                             </div>
@@ -105,24 +109,12 @@
                                             <th role="columnheader" tabindex="0" aria-controls="maillist" rowspan="1" colspan="1">項目</th>
                                         </tr>
                                     </thead>
-                                    <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                    <tbody role="alert" aria-live="polite" aria-relevant="all" th:each="email : ${emailList}">
                                         <tr>
-                                            <td>test@sample.com</td>
-                                            <td>件名１</td>
-                                            <td>田中　太郎</td>
-                                            <td>資料請求</td>
-                                        </tr>
-                                        <tr>
-                                            <td>test2@sample.com</td>
-                                            <td>件名２</td>
-                                            <td>鈴木　花子</td>
-                                            <td>商品に関する苦情</td>
-                                        </tr>
-                                        <tr>
-                                            <td>test3@sample.com</td>
-                                            <td>件名３</td>
-                                            <td>木村　二郎</td>
-                                            <td>その他</td>
+                                            <td th:text="${email.toAddr}">test@sample.com</td>
+                                            <td th:text="${email.subject}">件名１</td>
+                                            <td th:text="${email.name}">田中　太郎</td>
+                                            <td th:text="${T(ksbysample.webapp.email.config.Constant).getInstance().TYPE_MAP.get(email.type)}">資料請求</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -160,7 +152,7 @@
 <script type="text/javascript">
 <!--
 $(document).ready(function() {
-    $('#to').focus();
+    $('#toAddr').focus();
 
     $('#search').bind('click', function(){
         $('#mailSearchForm').submit();
