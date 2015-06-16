@@ -28,6 +28,17 @@
     .radio label {
         padding-right: 10px;
     }
+    .pagination > .disabled > a
+    , .pagination > .disabled > a:focus
+    , .pagination > .disabled > a:hover
+    , .pagination > .disabled > span
+    , .pagination > .disabled > span:focus
+    , .pagination > .disabled > span:hover {
+        color: #eee;
+        cursor: not-allowed;
+        background-color: #fff;
+        border-color: #ddd;
+    }
     -->
     </style>
 </head>
@@ -109,8 +120,8 @@
                                             <th role="columnheader" tabindex="0" aria-controls="maillist" rowspan="1" colspan="1">項目</th>
                                         </tr>
                                     </thead>
-                                    <tbody role="alert" aria-live="polite" aria-relevant="all" th:each="email : ${emailList}">
-                                        <tr>
+                                    <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                        <tr th:each="email : ${page.content}">
                                             <td th:text="${email.toAddr}">test@sample.com</td>
                                             <td th:text="${email.subject}">件名１</td>
                                             <td th:text="${email.name}">田中　太郎</td>
@@ -118,21 +129,15 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <div class="row">
-                                    <div class="col-xs-12">
-                                        <div class="dataTables_paginate paging_bootstrap">
-                                            <ul class="pagination">
-                                                <li class="prev disabled"><a href="#">← Previous</a></li>
-                                                <li class="active"><a href="#">1</a></li>
-                                                <li><a href="#">2</a></li>
-                                                <li><a href="#">3</a></li>
-                                                <li><a href="#">4</a></li>
-                                                <li><a href="#">5</a></li>
-                                                <li class="next"><a href="#">Next → </a></li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
+
+                                <div id="pagenation" th:include="common/pagenation :: pagenation (url='/mailsearch', page=${page}, ph=${ph})"></div>
+
+                                <form id="pagenationForm" method="post" action="#" th:action="@{#}" th:object="${mailsearchForm}">
+                                    <input type="hidden" name="toAddr" id="toAddr" th:value="*{toAddr}"/>
+                                    <input type="hidden" name="subject" id="subject" th:value="*{subject}"/>
+                                    <input type="hidden" name="name" id="name" th:value="*{name}"/>
+                                    <input type="hidden" name="type" id="type" th:each="typeItem : *{type}" th:value="${typeItem}"/>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -156,6 +161,14 @@ $(document).ready(function() {
 
     $('#search').bind('click', function(){
         $('#mailSearchForm').submit();
+    });
+
+    $('.js-pagenation').each(function(){
+        $(this).click(function(){
+            $('#pagenationForm').attr('action', $(this).attr('href'));
+            $(this).attr('href', '#');
+            $('#pagenationForm').submit();
+        });
     });
 });
 -->

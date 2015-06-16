@@ -8,12 +8,13 @@ import ksbysample.webapp.email.test.TestDataResource;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.seasar.doma.Select;
+import org.seasar.doma.jdbc.SelectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,6 +57,25 @@ public class MailsearchDaoTest {
         mailsearchForm.setName("太郎");
         emailList = mailsearchDao.selectCondition(mailsearchForm);
         assertThat(emailList.size(), is(3));
+    }
+
+    @Test
+    @TestDataLoader("src/test/resources/ksbysample/webapp/email/web/mailsearch/testdata")
+    public void testSelectConditionOptions() throws Exception {
+        MailsearchForm mailsearchForm = new MailsearchForm();
+        List<Email> emailList = mailsearchDao.selectCondition(mailsearchForm);
+        assertThat(emailList.size(), is(5));
+        assertThat(emailList.get(0).getToAddr(), is("hanako@sample.com"));
+
+        // offset(0).limit(1) を指定すると最初の１件目だけ取得できる
+        mailsearchForm = new MailsearchForm();
+        SelectOptions options = SelectOptions.get().offset(0).limit(1).count();
+        emailList = mailsearchDao.selectCondition(mailsearchForm, options);
+        assertThat(emailList.size(), is(1));
+        assertThat(emailList.get(0).getToAddr(), is("hanako@sample.com"));
+        // options.getCount() で offset, limit が指定されていない時の全件数を取得できる
+        long count = options.getCount();
+        assertThat(count, is(5L));
     }
 
 }
