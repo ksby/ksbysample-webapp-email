@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <title>xxxxxxxx</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/js/html5shiv.min.js"></script>
+    <script src="/js/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Custom styles for this template -->
+    <style>
+    <!--
+    body {
+        padding-top: 50px;
+    }
+    .navbar-brand {
+        font-size: 24px;
+    }
+    .form-group {
+        margin-bottom: 5px;
+    }
+    -->
+    </style>
+</head>
+
+<body>
+
+    <div th:fragment="pagenation (url, page, ph)">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="dataTables_paginate paging_bootstrap">
+                    <ul class="pagination">
+                        <li class="prev" th:classappend="${ph.hiddenPrev} ? 'disabled'">
+                            <a class="js-pagenation" th:href="@{${url}(page=${page.number - 1},size=${page.size})}">← Previous</a>
+                        </li>
+                        <li th:class="${ph.activePage1} ? 'active'">
+                            <a class="js-pagenation" th:href="@{${url}(page=${ph.page1PageValue},size=${page.size})}" th:text="${ph.page1PageValue + 1}">1</a>
+                        </li>
+                        <li th:class="${ph.activePage2} ? 'active'" th:classappend="${ph.hiddenPage2} ? 'disabled'">
+                            <a class="js-pagenation" th:href="@{${url}(page=${ph.page1PageValue + 1},size=${page.size})}" th:text="${ph.page1PageValue + 2}">2</a>
+                        </li>
+                        <li th:class="${ph.activePage3} ? 'active'" th:classappend="${ph.hiddenPage3} ? 'disabled'">
+                            <a class="js-pagenation" th:href="@{${url}(page=${ph.page1PageValue + 2},size=${page.size})}" th:text="${ph.page1PageValue + 3}">3</a>
+                        </li>
+                        <li th:class="${ph.activePage4} ? 'active'" th:classappend="${ph.hiddenPage4} ? 'disabled'">
+                            <a class="js-pagenation" th:href="@{${url}(page=${ph.page1PageValue + 3},size=${page.size})}" th:text="${ph.page1PageValue + 4}">4</a>
+                        </li>
+                        <li th:class="${ph.activePage5} ? 'active'" th:classappend="${ph.hiddenPage5} ? 'disabled'">
+                            <a class="js-pagenation" th:href="@{${url}(page=${ph.page1PageValue + 4},size=${page.size})}" th:text="${ph.page1PageValue + 5}">5</a>
+                        </li>
+                        <li class="next" th:classappend="${ph.hiddenNext} ? 'disabled'">
+                            <a class="js-pagenation" th:href="@{${url}(page=${page.number + 1},size=${page.size})}">Next → </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
