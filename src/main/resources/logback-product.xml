@@ -3,4 +3,7 @@
     <root level="INFO">
         <appender-ref ref="FILE"/>
     </root>
+
+    <!-- Doma 2 -->
+    <logger name="org.seasar.doma" level="ERROR"/>
 </included>

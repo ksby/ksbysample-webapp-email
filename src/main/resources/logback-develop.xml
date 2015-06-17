@@ -14,4 +14,7 @@
     <logger name="jdbc.resultset" level="ERROR"/>
     <logger name="jdbc.resultsettable" level="ERROR"/>
     <logger name="jdbc.connection" level="DEBUG"/>
+
+    <!-- Doma 2 -->
+    <logger name="org.seasar.doma" level="ERROR"/>
 </included>
