@@ -17,9 +17,6 @@ public class Constant {
     // 性別
     public Map<String, String> SEX_MAP;
 
-    // 問い合わせ項目
-    public Map<String, String> TYPE_MAP;
-
     // 商品
     public Map<String, String> ITEM_MAP;
 

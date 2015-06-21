@@ -103,9 +103,9 @@
                                     <div class="col-sm-10">
                                         <div class="row"><div class="col-sm-8">
                                             <select name="type" id="type" class="form-control input-sm" th:field="*{type}">
-                                                <option th:each="type : ${T(ksbysample.webapp.email.config.Constant).getInstance().TYPE_MAP.entrySet()}"
-                                                        th:value="${type.getKey()}"
-                                                        th:text="${type.getValue()}">sex</option>
+                                                <option th:each="type : ${T(ksbysample.webapp.email.domain.InquiryType).values()}"
+                                                        th:value="${type.getValue()}"
+                                                        th:text="${type.getText()}">sex</option>
                                             </select>
                                         </div></div>
                                         <div class="row" th:if="${#fields.hasErrors('*{type}')}"><div class="col-sm-10"><p class="form-control-static text-danger"><small th:errors="*{type}">ここにエラーメッセージを表示します</small></p></div></div>

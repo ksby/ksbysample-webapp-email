@@ -95,8 +95,8 @@
                                             <div class="col-sm-10">
                                                 <div class="row"><div class="col-sm-12">
                                                     <div class="checkbox">
-                                                        <label th:each="type : ${T(ksbysample.webapp.email.config.Constant).getInstance().TYPE_MAP.entrySet()}">
-                                                            <input type="checkbox" name="type" th:value="${type.getKey()}" th:text="${type.getValue()}" th:field="*{type}"/>
+                                                        <label th:each="type : ${T(ksbysample.webapp.email.domain.InquiryType).values()}">
+                                                            <input type="checkbox" name="type" th:value="${type.getValue()}" th:text="${type.getText()}" th:field="*{type}"/>
                                                         </label>
                                                     </div>
                                                 </div></div>
@@ -125,7 +125,7 @@
                                             <td th:text="${email.toAddr}">test@sample.com</td>
                                             <td th:text="${email.subject}">件名１</td>
                                             <td th:text="${email.name}">田中　太郎</td>
-                                            <td th:text="${T(ksbysample.webapp.email.config.Constant).getInstance().TYPE_MAP.get(email.type)}">資料請求</td>
+                                            <td th:text="${T(ksbysample.webapp.email.domain.InquiryType).getText(email.type)}">資料請求</td>
                                         </tr>
                                     </tbody>
                                 </table>

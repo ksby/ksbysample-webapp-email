@@ -1,6 +1,7 @@
 package ksbysample.webapp.email.helper.mail;
 
 import ksbysample.webapp.email.config.Constant;
+import ksbysample.webapp.email.domain.InquiryType;
 import ksbysample.webapp.email.util.VelocityUtils;
 import ksbysample.webapp.email.web.mailsend.MailsendForm;
 import org.apache.commons.lang3.StringUtils;
@@ -84,7 +85,7 @@ public class MAIL001MailHelper {
         Map<String, Object> model = new HashMap<>();
         model.put("name", mailsendForm.getName());
         model.put("sex", constant.SEX_MAP.get(mailsendForm.getSex()));
-        model.put("type", constant.TYPE_MAP.get(mailsendForm.getType()));
+        model.put("type", InquiryType.getText(mailsendForm.getType()));
 
         String itemList = null;
         if (mailsendForm.getItem() != null) {
@@ -103,7 +104,7 @@ public class MAIL001MailHelper {
         Context ctx = new Context(LocaleContextHolder.getLocale());
         ctx.setVariable("name", mailsendForm.getName());
         ctx.setVariable("sex", constant.SEX_MAP.get(mailsendForm.getSex()));
-        ctx.setVariable("type", constant.TYPE_MAP.get(mailsendForm.getType()));
+        ctx.setVariable("type", InquiryType.getText(mailsendForm.getType()));
 
         String itemList = null;
         if (mailsendForm.getItem() != null) {

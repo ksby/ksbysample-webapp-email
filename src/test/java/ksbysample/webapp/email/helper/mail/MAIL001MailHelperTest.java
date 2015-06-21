@@ -2,6 +2,7 @@ package ksbysample.webapp.email.helper.mail;
 
 import ksbysample.webapp.email.Application;
 import ksbysample.webapp.email.config.Constant;
+import ksbysample.webapp.email.domain.InquiryType;
 import ksbysample.webapp.email.web.mailsend.MailsendForm;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -85,7 +86,7 @@ public class MAIL001MailHelperTest {
             Constant constant = Constant.getInstance();
             assertThat(document, hasXPath("//*[@id=\"name\"]", equalTo(mailsendFormSimple.getName())));
             assertThat(document, hasXPath("//*[@id=\"sex\"]", equalTo(constant.SEX_MAP.get(mailsendFormSimple.getSex()))));
-            assertThat(document, hasXPath("//*[@id=\"type\"]", equalTo(constant.TYPE_MAP.get(mailsendFormSimple.getType()))));
+            assertThat(document, hasXPath("//*[@id=\"type\"]", equalTo(InquiryType.getText(mailsendFormSimple.getType()))));
             assertThat(document, hasXPath("//*[@id=\"item\"]"
                     , equalTo(
                     mailsendFormSimple.getItem().stream()
